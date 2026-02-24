@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd C:\\\\Users\\\\zenaq\\\\OneDrive\\\\Desktop\\\\claude project\\\\fysh:*)",
+      "Bash(which gh:*)",
+      "Bash(powershell.exe:*)",
+      "Bash(cd C:\\\\Users\\\\zenaq\\\\OneDrive\\\\Desktop\\\\claude project:*)"
+    ]
+  }
+}

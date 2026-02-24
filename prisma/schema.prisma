@@ -1,0 +1,363 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// USER & SOCIAL
+// ============================================
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  username     String   @unique
+  displayName  String?  @map("display_name")
+  avatarUrl    String?  @map("avatar_url")
+  bio          String?
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  picks             Pick[]
+  votes             Vote[]
+  comments          Comment[]
+  followsGiven      Follow[]     @relation("Follower")
+  followsReceived   Follow[]     @relation("Following")
+  stats             UserStats?
+  alertPreferences  AlertPreference[]
+  notifications     Notification[]
+  trackedBets       TrackedBet[]
+
+  @@map("users")
+}
+
+model Follow {
+  id          String   @id @default(uuid())
+  followerId  String   @map("follower_id")
+  followingId String   @map("following_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  follower  User @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@map("follows")
+}
+
+model UserStats {
+  id            String   @id @default(uuid())
+  userId        String   @unique @map("user_id")
+  totalPicks    Int      @default(0) @map("total_picks")
+  wins          Int      @default(0)
+  losses        Int      @default(0)
+  pushes        Int      @default(0)
+  winRate       Float    @default(0) @map("win_rate")
+  currentStreak Int      @default(0) @map("current_streak")
+  bestStreak    Int      @default(0) @map("best_streak")
+  roi           Float    @default(0)
+  unitsProfit   Float    @default(0) @map("units_profit")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_stats")
+}
+
+// ============================================
+// GAMES & ODDS
+// ============================================
+
+enum Sport {
+  NBA
+  NFL
+  MLB
+  NHL
+  NCAAB
+  NCAAF
+}
+
+enum GameStatus {
+  SCHEDULED
+  LIVE
+  FINAL
+}
+
+model Game {
+  id            String     @id @default(uuid())
+  externalId    String     @unique @map("external_id")
+  sport         Sport
+  homeTeam      String     @map("home_team")
+  awayTeam      String     @map("away_team")
+  homeTeamAbbr  String     @map("home_team_abbr")
+  awayTeamAbbr  String     @map("away_team_abbr")
+  startTime     DateTime   @map("start_time")
+  status        GameStatus @default(SCHEDULED)
+  homeScore     Int?       @map("home_score")
+  awayScore     Int?       @map("away_score")
+  season        String
+  week          String?
+  createdAt     DateTime   @default(now()) @map("created_at")
+  updatedAt     DateTime   @updatedAt @map("updated_at")
+
+  // Relations
+  odds      Odds[]
+  props     PlayerProp[]
+  picks     Pick[]
+  aiInsights AiInsight[]
+
+  @@map("games")
+}
+
+enum MarketType {
+  SPREAD
+  MONEYLINE
+  TOTAL
+}
+
+model Odds {
+  id          String     @id @default(uuid())
+  gameId      String     @map("game_id")
+  sportsbook  String
+  marketType  MarketType @map("market_type")
+  homeLine    Float?     @map("home_line")
+  awayLine    Float?     @map("away_line")
+  homeOdds    Int        @map("home_odds")
+  awayOdds    Int        @map("away_odds")
+  overUnder   Float?     @map("over_under")
+  overOdds    Int?       @map("over_odds")
+  underOdds   Int?       @map("under_odds")
+  fetchedAt   DateTime   @map("fetched_at")
+
+  // QuickSlip fields (from competitive gaps)
+  bookmakerEventId     String? @map("bookmaker_event_id")
+  bookmakerMarketId    String? @map("bookmaker_market_id")
+  bookmakerSelectionId String? @map("bookmaker_selection_id")
+  deeplinkUrl          String? @map("deeplink_url")
+
+  game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  @@map("odds")
+}
+
+model PlayerProp {
+  id                 String   @id @default(uuid())
+  gameId             String   @map("game_id")
+  playerName         String   @map("player_name")
+  playerTeam         String   @map("player_team")
+  propType           String   @map("prop_type")
+  line               Float
+  overOdds           Int      @map("over_odds")
+  underOdds          Int      @map("under_odds")
+  sportsbook         String
+  hitRateLast5       Float?   @map("hit_rate_last5")
+  hitRateLast10      Float?   @map("hit_rate_last10")
+  hitRateSeason      Float?   @map("hit_rate_season")
+  hitRateVsOpponent  Float?   @map("hit_rate_vs_opponent")
+  aiAnalysis         String?  @map("ai_analysis")
+  aiAnalyzedAt       DateTime? @map("ai_analyzed_at")
+  fetchedAt          DateTime @map("fetched_at")
+
+  // QuickSlip fields (from competitive gaps)
+  bookmakerEventId     String? @map("bookmaker_event_id")
+  bookmakerMarketId    String? @map("bookmaker_market_id")
+  bookmakerSelectionId String? @map("bookmaker_selection_id")
+  deeplinkUrl          String? @map("deeplink_url")
+
+  game  Game   @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  picks Pick[]
+
+  @@map("player_props")
+}
+
+// ============================================
+// PICKS & ENGAGEMENT
+// ============================================
+
+enum PickType {
+  SPREAD
+  MONEYLINE
+  TOTAL
+  PROP
+}
+
+enum Confidence {
+  LOW
+  MEDIUM
+  HIGH
+  LOCK
+}
+
+enum PickResult {
+  PENDING
+  WIN
+  LOSS
+  PUSH
+  VOID
+}
+
+model Pick {
+  id         String      @id @default(uuid())
+  userId     String      @map("user_id")
+  gameId     String      @map("game_id")
+  propId     String?     @map("prop_id")
+  pickType   PickType    @map("pick_type")
+  selection  String
+  odds       Int
+  confidence Confidence
+  analysis   String?
+  result     PickResult  @default(PENDING)
+  createdAt  DateTime    @default(now()) @map("created_at")
+
+  // CLV tracking (from competitive gaps)
+  closingOdds Int?   @map("closing_odds")
+  clv         Float? // Closing Line Value as percentage
+
+  user     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game     Game         @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  prop     PlayerProp?  @relation(fields: [propId], references: [id], onDelete: SetNull)
+  votes    Vote[]
+  comments Comment[]
+
+  @@map("picks")
+}
+
+model Vote {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  pickId    String   @map("pick_id")
+  value     Int      // 1 or -1
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pick Pick @relation(fields: [pickId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, pickId])
+  @@map("votes")
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  pickId    String   @map("pick_id")
+  content   String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pick Pick @relation(fields: [pickId], references: [id], onDelete: Cascade)
+
+  @@map("comments")
+}
+
+// ============================================
+// AI INSIGHTS
+// ============================================
+
+enum InsightType {
+  CATCH_OF_DAY
+  PROP_ANALYSIS
+  GAME_PREVIEW
+}
+
+model AiInsight {
+  id             String      @id @default(uuid())
+  type           InsightType
+  title          String
+  content        String
+  structuredData Json?       @map("structured_data")
+  sport          Sport
+  gameId         String?     @map("game_id")
+  propId         String?     @map("prop_id")
+  publishedAt    DateTime    @map("published_at")
+  expiresAt      DateTime?   @map("expires_at")
+
+  game Game? @relation(fields: [gameId], references: [id], onDelete: SetNull)
+
+  @@map("ai_insights")
+}
+
+// ============================================
+// BET TRACKER (from competitive gaps)
+// ============================================
+
+enum BetType {
+  STRAIGHT
+  PARLAY
+  TEASER
+  ROUND_ROBIN
+}
+
+enum BetResult {
+  PENDING
+  WIN
+  LOSS
+  PUSH
+  CASHOUT
+}
+
+model TrackedBet {
+  id              String    @id @default(uuid())
+  userId          String    @map("user_id")
+  sportsbook      String
+  betType         BetType   @map("bet_type")
+  legs            Json      // Array of {game, pick, odds} objects
+  totalOdds       Int       @map("total_odds")
+  stake           Float
+  potentialPayout Float     @map("potential_payout")
+  actualPayout    Float?    @map("actual_payout")
+  result          BetResult @default(PENDING)
+  isFreeBet       Boolean   @default(false) @map("is_free_bet")
+  notes           String?
+  screenshotUrl   String?   @map("screenshot_url")
+  placedAt        DateTime  @map("placed_at")
+  gradedAt        DateTime? @map("graded_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("tracked_bets")
+}
+
+// ============================================
+// NOTIFICATIONS & ALERTS (from competitive gaps)
+// ============================================
+
+enum AlertType {
+  LINE_MOVEMENT
+  GAME_START
+  PICK_RESULT
+  CATCH_OF_DAY
+  FOLLOWED_USER_PICK
+  SHARP_MOVEMENT
+  INJURY_NEWS
+}
+
+model AlertPreference {
+  id       String    @id @default(uuid())
+  userId   String    @map("user_id")
+  alertType AlertType @map("alert_type")
+  config   Json      // Alert-specific configuration
+  enabled  Boolean   @default(true)
+  channels Json      // {inApp, email, push}
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("alert_preferences")
+}
+
+model Notification {
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
+  alertType AlertType @map("alert_type")
+  title     String
+  body      String
+  data      Json?     // Additional structured data
+  read      Boolean   @default(false)
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
