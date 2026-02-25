@@ -111,7 +111,7 @@ export async function GET(request: NextRequest) {
       meta: {
         total: items.length,
         hasMore,
-        nextCursor: hasMore ? items[items.length - 1].id : null,
+        nextCursor: hasMore ? items[items.length - 1]?.id : null,
       },
     })
   } catch (error) {
@@ -120,7 +120,7 @@ export async function GET(request: NextRequest) {
         {
           success: false,
           error: 'Invalid query parameters',
-          details: error.errors,
+          details: error.issues,
         },
         { status: 400 }
       )

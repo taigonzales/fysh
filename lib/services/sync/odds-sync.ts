@@ -137,7 +137,7 @@ export async function syncOddsForSport(sport: string): Promise<SyncResult> {
  * This is the recommended approach to conserve API quota
  */
 export async function syncPriorityOdds(): Promise<SyncResult> {
-  return withLock('sync-odds', async () => {
+  const lockResult = await withLock('sync-odds', async () => {
     const startTime = Date.now()
     const result = createSyncResult()
 
@@ -181,7 +181,7 @@ export async function syncPriorityOdds(): Promise<SyncResult> {
         const refreshInterval = getRefreshInterval(priority)
 
         // Check if we have recent odds
-        const latestOdds = game.odds[0]
+        const latestOdds = (game as any).odds?.[0]
         if (latestOdds && !isDataStale(latestOdds.fetchedAt, refreshInterval)) {
           console.log(
             `[OddsSync] Skipping ${game.sport} - ${game.awayTeam} @ ${game.homeTeam} (odds fresh, fetched ${Math.round((Date.now() - latestOdds.fetchedAt.getTime()) / 1000 / 60)}min ago)`
@@ -257,7 +257,9 @@ export async function syncPriorityOdds(): Promise<SyncResult> {
     }
 
     return result
-  }) || createSyncResult()
+  })
+
+  return lockResult || createSyncResult()
 }
 
 /**

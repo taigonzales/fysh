@@ -48,8 +48,8 @@ async function main() {
 
     if (nbaEvents.length > 0) {
       const firstGame = nbaEvents[0]
-      console.log(`   Example: ${firstGame.away_team} @ ${firstGame.home_team}`)
-      console.log(`   Starts: ${new Date(firstGame.commence_time).toLocaleString()}`)
+      console.log(`   Example: ${firstGame?.away_team} @ ${firstGame?.home_team}`)
+      console.log(`   Starts: ${firstGame?.commence_time ? new Date(firstGame.commence_time).toLocaleString() : 'N/A'}`)
 
       // Test transformation
       console.log('\n🔄 Test 3: Testing data transformation...')
@@ -58,9 +58,9 @@ async function main() {
 
       const exampleGame = games[0]
       console.log(`   Example transformed:`)
-      console.log(`     - Sport: ${exampleGame.sport}`)
-      console.log(`     - Teams: ${exampleGame.awayTeamAbbr} @ ${exampleGame.homeTeamAbbr}`)
-      console.log(`     - Season: ${exampleGame.season}`)
+      console.log(`     - Sport: ${exampleGame?.sport}`)
+      console.log(`     - Teams: ${exampleGame?.awayTeamAbbr} @ ${exampleGame?.homeTeamAbbr}`)
+      console.log(`     - Season: ${exampleGame?.season}`)
     }
 
     // Test 3: Fetch odds for one game (will consume quota)
@@ -69,7 +69,7 @@ async function main() {
       console.log('   ⚠️  This will consume API quota')
 
       const firstEvent = nbaEvents[0]
-      const oddsEvent = await oddsApiClient.getEventOdds('basketball_nba', firstEvent.id, {
+      const oddsEvent = await oddsApiClient.getEventOdds('basketball_nba', firstEvent!.id, {
         markets: ['h2h', 'spreads', 'totals'],
         includeLinks: true, // Test QuickSlip integration
       })
@@ -84,7 +84,7 @@ async function main() {
         const oddsWithLinks = odds.filter((o) => o.deeplinkUrl)
         if (oddsWithLinks.length > 0) {
           console.log(`   ✅ Found ${oddsWithLinks.length} odds with QuickSlip deep links`)
-          console.log(`   Example link: ${oddsWithLinks[0].deeplinkUrl}`)
+          console.log(`   Example link: ${oddsWithLinks[0]?.deeplinkUrl}`)
         } else {
           console.log('   ℹ️  No QuickSlip deep links found (may not be available for this game)')
         }

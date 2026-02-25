@@ -316,7 +316,7 @@ export function getTeamAbbreviation(teamName: string, sport: string): string {
   // Fallback: generate from team name
   const words = teamName.split(' ')
   if (words.length >= 2) {
-    return words[words.length - 1].substring(0, 3).toUpperCase()
+    return words[words.length - 1]?.substring(0, 3).toUpperCase() || teamName.substring(0, 3).toUpperCase()
   }
   return teamName.substring(0, 3).toUpperCase()
 }

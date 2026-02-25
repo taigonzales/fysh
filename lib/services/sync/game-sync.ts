@@ -3,7 +3,7 @@
  * Fetches and updates games from The Odds API
  */
 
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, Sport } from '@prisma/client'
 import { oddsApiClient, SPORT_KEYS, transformGames } from '@/lib/api/odds-api'
 import type { TransformedGame } from '@/lib/api/odds-api'
 import {
@@ -79,7 +79,7 @@ export async function syncGamesForSport(sport: string): Promise<SyncResult> {
           await prisma.game.create({
             data: {
               externalId: game.externalId,
-              sport: game.sport,
+              sport: game.sport as Sport,
               homeTeam: game.homeTeam,
               awayTeam: game.awayTeam,
               homeTeamAbbr: game.homeTeamAbbr,
@@ -119,7 +119,7 @@ export async function syncGamesForSport(sport: string): Promise<SyncResult> {
  * Sync games for all supported sports
  */
 export async function syncAllGames(): Promise<SyncResult> {
-  return withLock('sync-games', async () => {
+  const result = await withLock('sync-games', async () => {
     const startTime = Date.now()
     const aggregateResult = createSyncResult()
 
@@ -145,7 +145,9 @@ export async function syncAllGames(): Promise<SyncResult> {
     logSyncResult('Games:All', aggregateResult)
 
     return aggregateResult
-  }) || createSyncResult() // Return empty result if lock not acquired
+  })
+
+  return result || createSyncResult() // Return empty result if lock not acquired
 }
 
 /**

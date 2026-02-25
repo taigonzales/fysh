@@ -39,7 +39,7 @@ async function main() {
     // Fetch odds for NBA
     console.log('💰 Fetching NBA odds from API...')
     const events = await oddsApiClient.getOdds({
-      sport: SPORT_KEYS.NBA,
+      sport: SPORT_KEYS.NBA!,
       markets: DEFAULT_MARKETS,
       includeLinks: true,
     })
@@ -49,14 +49,14 @@ async function main() {
     if (events.length > 0) {
       const firstEvent = events[0]
       console.log(`\n📋 First event:`)
-      console.log(`   ID: ${firstEvent.id}`)
-      console.log(`   ${firstEvent.away_team} @ ${firstEvent.home_team}`)
-      console.log(`   Bookmakers: ${firstEvent.bookmakers?.length || 0}`)
+      console.log(`   ID: ${firstEvent?.id}`)
+      console.log(`   ${firstEvent?.away_team} @ ${firstEvent?.home_team}`)
+      console.log(`   Bookmakers: ${firstEvent?.bookmakers?.length || 0}`)
 
-      if (firstEvent.bookmakers && firstEvent.bookmakers.length > 0) {
+      if (firstEvent?.bookmakers && firstEvent.bookmakers.length > 0) {
         const firstBookmaker = firstEvent.bookmakers[0]
-        console.log(`   First bookmaker: ${firstBookmaker.key}`)
-        console.log(`   Markets: ${firstBookmaker.markets?.length || 0}`)
+        console.log(`   First bookmaker: ${firstBookmaker?.key}`)
+        console.log(`   Markets: ${firstBookmaker?.markets?.length || 0}`)
       }
 
       // Check if our sample game is in the response

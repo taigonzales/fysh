@@ -31,7 +31,7 @@ const prisma = new PrismaClient()
  * Props consume significant API quota, so we only fetch for important games
  */
 export async function syncPriorityPlayerProps(): Promise<SyncResult> {
-  return withLock('sync-props', async () => {
+  const lockResult = await withLock('sync-props', async () => {
     const startTime = Date.now()
     const result = createSyncResult()
 
@@ -159,7 +159,9 @@ export async function syncPriorityPlayerProps(): Promise<SyncResult> {
     }
 
     return result
-  }) || createSyncResult()
+  })
+
+  return lockResult || createSyncResult()
 }
 
 /**

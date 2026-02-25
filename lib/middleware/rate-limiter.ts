@@ -94,7 +94,7 @@ export function getClientIp(request: NextRequest): string {
   const cfConnectingIp = request.headers.get('cf-connecting-ip')
 
   if (forwardedFor) {
-    return forwardedFor.split(',')[0].trim()
+    return forwardedFor.split(',')[0]?.trim() || 'unknown'
   }
 
   if (realIp) {

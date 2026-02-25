@@ -81,7 +81,7 @@ export function handleError(error: unknown): NextResponse {
       {
         success: false,
         error: 'Validation error',
-        details: error.errors,
+        details: error.issues,
       },
       { status: ERROR_CODES.BAD_REQUEST }
     )

@@ -4,7 +4,29 @@
       "Bash(cd C:\\\\Users\\\\zenaq\\\\OneDrive\\\\Desktop\\\\claude project\\\\fysh:*)",
       "Bash(which gh:*)",
       "Bash(powershell.exe:*)",
-      "Bash(cd C:\\\\Users\\\\zenaq\\\\OneDrive\\\\Desktop\\\\claude project:*)"
+      "Bash(cd C:\\\\Users\\\\zenaq\\\\OneDrive\\\\Desktop\\\\claude project:*)",
+      "WebSearch",
+      "WebFetch(domain:the-odds-api.com)",
+      "Bash(head:*)",
+      "Bash(pnpm test:sync:*)",
+      "Bash(tail:*)",
+      "Bash(echo:*)",
+      "Bash(pnpm db:push:*)",
+      "Bash(npx prisma:*)",
+      "Bash(test:*)",
+      "Bash(pnpm db:generate:*)",
+      "Bash(pnpm db:seed:*)",
+      "Bash(pnpm seed:odds:*)",
+      "Bash(tsx:*)",
+      "Bash(pnpm exec:*)",
+      "Bash(pnpm dev:*)",
+      "Bash(curl:*)",
+      "Bash(sleep 3:*)",
+      "Bash(grep:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm list:*)",
+      "Bash(find:*)",
+      "Skill(gsd:progress)"
     ]
   }
 }

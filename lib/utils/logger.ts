@@ -230,14 +230,21 @@ export function logRequest(
   duration: number,
   meta?: Record<string, any>
 ): void {
-  const level = status >= 500 ? LogLevel.ERROR : status >= 400 ? LogLevel.WARN : LogLevel.INFO
-
-  apiLogger.log(level, `${context.method} ${context.path} ${status}`, {
+  const message = `${context.method} ${context.path} ${status}`
+  const logData = {
     ...context,
     ...meta,
     status,
     duration: `${duration}ms`,
-  })
+  }
+
+  if (status >= 500) {
+    apiLogger.error(message, logData)
+  } else if (status >= 400) {
+    apiLogger.warn(message, logData)
+  } else {
+    apiLogger.info(message, logData)
+  }
 }
 
 // ============================================
@@ -278,7 +285,11 @@ export interface SyncLogContext {
  */
 export function logSync(context: SyncLogContext): void {
   const hasErrors = context.errors && context.errors.length > 0
-  const level = hasErrors ? LogLevel.ERROR : LogLevel.INFO
+  const message = `Sync: ${context.operation}`
 
-  syncLogger.log(level, `Sync: ${context.operation}`, context)
+  if (hasErrors) {
+    syncLogger.error(message, context)
+  } else {
+    syncLogger.info(message, context)
+  }
 }

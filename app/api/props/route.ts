@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
     const sportsbook = searchParams.get('sportsbook')
     const minLine = searchParams.get('minLine')
     const maxLine = searchParams.get('maxLine')
-    const limit = searchParams.get('limit')
+    const limitParam = searchParams.get('limit')
 
     if (playerName) rawParams.playerName = playerName
     if (propType) rawParams.propType = propType
@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
     if (sportsbook) rawParams.sportsbook = sportsbook
     if (minLine) rawParams.minLine = minLine
     if (maxLine) rawParams.maxLine = maxLine
-    if (limit) rawParams.limit = limit
+    if (limitParam) rawParams.limit = limitParam
 
     const params = QuerySchema.parse(rawParams)
 
@@ -131,7 +131,7 @@ export async function GET(request: NextRequest) {
         {
           success: false,
           error: 'Invalid query parameters',
-          details: error.errors,
+          details: error.issues,
         },
         { status: 400 }
       )

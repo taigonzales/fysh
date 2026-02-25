@@ -40,7 +40,7 @@ async function main() {
 
     try {
       const event = await oddsApiClient.getEventOdds(
-        SPORT_KEYS.NBA,
+        SPORT_KEYS.NBA!,
         game.externalId,
         {
           markets: DEFAULT_MARKETS,
@@ -61,28 +61,30 @@ async function main() {
         console.log(`   Markets: ${[...new Set(odds.map(o => o.marketType))].join(', ')}`)
 
         // Try to create one in the database
-        console.log(`\n💾 Testing database insert...`)
-        const testOdds = odds[0]
-        await prisma.odds.create({
-          data: {
-            gameId: game.id,
-            sportsbook: testOdds.sportsbook,
-            marketType: testOdds.marketType,
-            homeLine: testOdds.homeLine,
-            awayLine: testOdds.awayLine,
-            homeOdds: testOdds.homeOdds,
-            awayOdds: testOdds.awayOdds,
-            overUnder: testOdds.overUnder,
-            overOdds: testOdds.overOdds,
-            underOdds: testOdds.underOdds,
-            fetchedAt: testOdds.fetchedAt,
-            bookmakerEventId: testOdds.bookmakerEventId,
-            bookmakerMarketId: testOdds.bookmakerMarketId,
-            bookmakerSelectionId: testOdds.bookmakerSelectionId,
-            deeplinkUrl: testOdds.deeplinkUrl,
-          },
-        })
-        console.log(`   ✅ Successfully inserted 1 odds record!`)
+        if (odds.length > 0) {
+          console.log(`\n💾 Testing database insert...`)
+          const testOdds = odds[0]!
+          await prisma.odds.create({
+            data: {
+              gameId: game.id,
+              sportsbook: testOdds.sportsbook,
+              marketType: testOdds.marketType,
+              homeLine: testOdds.homeLine,
+              awayLine: testOdds.awayLine,
+              homeOdds: testOdds.homeOdds,
+              awayOdds: testOdds.awayOdds,
+              overUnder: testOdds.overUnder,
+              overOdds: testOdds.overOdds,
+              underOdds: testOdds.underOdds,
+              fetchedAt: testOdds.fetchedAt,
+              bookmakerEventId: testOdds.bookmakerEventId,
+              bookmakerMarketId: testOdds.bookmakerMarketId,
+              bookmakerSelectionId: testOdds.bookmakerSelectionId,
+              deeplinkUrl: testOdds.deeplinkUrl,
+            },
+          })
+          console.log(`   ✅ Successfully inserted 1 odds record!`)
+        }
       }
     } catch (error) {
       console.error('\n❌ getEventOdds failed:')
