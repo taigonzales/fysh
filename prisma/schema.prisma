@@ -363,3 +363,18 @@ model Notification {
 
   @@map("notifications")
 }
+
+// ============================================
+// WAITLIST (Marketing Landing Page)
+// ============================================
+
+model Waitlist {
+  id             String   @id @default(uuid())
+  email          String   @unique
+  referralSource String?  @map("referral_source") // Where they heard about us
+  interests      Json?    // Features they're interested in
+  verified       Boolean  @default(false)          // Email verification status
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  @@map("waitlist")
+}

@@ -1,67 +1,73 @@
-import { Fish } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import Link from 'next/link'
+import { HeroSection } from './sections/hero-section'
+import { SocialProofBar } from './sections/social-proof-bar'
+import { FeatureShowcase } from './sections/feature-showcase'
+import { HowItWorks } from './sections/how-it-works'
+import { ComparisonSection } from './sections/comparison-section'
+import { PricingSection } from './sections/pricing-section'
+import { WaitlistSection } from './sections/waitlist-section'
+import { FAQSection } from './sections/faq-section'
+import { FooterCTA } from './sections/footer-cta'
 
-export default function HomePage() {
+export const metadata = {
+  title: 'FYSH - AI-Powered Sports Betting Research',
+  description:
+    'Advanced prop analytics, AI insights, and transparent track records. Built for serious bettors who demand data-driven decisions.',
+  keywords: [
+    'sports betting',
+    'prop betting',
+    'AI sports analysis',
+    'betting analytics',
+    'sports betting research',
+    'prop finder',
+    'betting tracker',
+    'CLV tracking',
+    'NBA props',
+    'NFL props',
+  ],
+  authors: [{ name: 'FYSH' }],
+  creator: 'FYSH',
+  publisher: 'FYSH',
+  openGraph: {
+    title: 'FYSH - AI-Powered Sports Betting Research',
+    description:
+      'Advanced prop analytics, AI insights, and transparent track records. Built for serious bettors.',
+    url: 'https://fysh.bet',
+    siteName: 'FYSH',
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'FYSH - AI-Powered Sports Betting Research',
+    description:
+      'Advanced prop analytics, AI insights, and transparent track records. Built for serious bettors.',
+    creator: '@fyshbet',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+}
+
+export default function LandingPage() {
   return (
-    <div className="container mx-auto px-4">
-      {/* Hero Section */}
-      <section className="flex min-h-[80vh] flex-col items-center justify-center text-center py-20">
-        <Fish className="h-24 w-24 text-neon-teal mb-6 animate-pulse" />
-        <h1 className="text-6xl font-bold text-text-primary mb-4">
-          Reel in smarter bets
-        </h1>
-        <p className="text-xl text-text-secondary max-w-2xl mb-8">
-          FYSH combines deep prop analytics with AI-powered insights and a thriving
-          community of sharp bettors. Track your bets, discover edge, and level up your game.
-        </p>
-        <div className="flex gap-4">
-          <Link href="/auth/signup">
-            <Button variant="primary" size="lg">
-              Get Started
-            </Button>
-          </Link>
-          <Link href="/auth/login">
-            <Button variant="secondary" size="lg">
-              Login
-            </Button>
-          </Link>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-20 grid md:grid-cols-3 gap-8">
-        <Card hoverable glowColor="teal" className="p-6">
-          <h3 className="text-xl font-bold text-text-primary mb-3">
-            🎯 Prop Analytics
-          </h3>
-          <p className="text-text-secondary">
-            Deep statistical analysis on every prop. Hit rates, trends, matchup data -
-            everything you need to find edge.
-          </p>
-        </Card>
-
-        <Card hoverable glowColor="teal" className="p-6">
-          <h3 className="text-xl font-bold text-text-primary mb-3">
-            🤖 AI Insights
-          </h3>
-          <p className="text-text-secondary">
-            Claude-powered analysis highlights the best opportunities daily.
-            Get the &quot;Catch of the Day&quot; and prop breakdowns.
-          </p>
-        </Card>
-
-        <Card hoverable glowColor="teal" className="p-6">
-          <h3 className="text-xl font-bold text-text-primary mb-3">
-            📊 Bet Tracking
-          </h3>
-          <p className="text-text-secondary">
-            Track every bet, calculate ROI, monitor CLV, and see your performance
-            across all sportsbooks in one place.
-          </p>
-        </Card>
-      </section>
-    </div>
+    <>
+      <HeroSection />
+      <SocialProofBar />
+      <FeatureShowcase />
+      <HowItWorks />
+      <ComparisonSection />
+      <PricingSection />
+      <WaitlistSection />
+      <FAQSection />
+      <FooterCTA />
+    </>
   )
 }
