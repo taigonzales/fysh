@@ -378,3 +378,24 @@ model Waitlist {
 
   @@map("waitlist")
 }
+
+// ============================================
+// PLAYER STATS CACHE (AI Layer)
+// ============================================
+
+model PlayerSeasonStats {
+  id           String   @id @default(uuid())
+  playerName   String   @map("player_name")
+  sport        Sport
+  season       String
+  teamName     String   @map("team_name")
+  gamesPlayed  Int      @map("games_played")
+  seasonAvg    Json     @map("season_avg")     // {points, rebounds, assists, ...}
+  last25Games  Json     @map("last25_games")   // Array of game logs
+  homeAway     Json     @map("home_away")      // Split stats {home: {...}, away: {...}}
+  vsOpponents  Json     @map("vs_opponents")   // Historical matchups {teamName: [...games]}
+  fetchedAt    DateTime @map("fetched_at")
+
+  @@unique([playerName, sport, season])
+  @@map("player_season_stats")
+}
