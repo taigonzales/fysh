@@ -23,15 +23,25 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
 
-    const params = QuerySchema.parse({
-      sport: searchParams.get('sport'),
-      status: searchParams.get('status'),
-      date: searchParams.get('date'),
-      startDate: searchParams.get('startDate'),
-      endDate: searchParams.get('endDate'),
-      limit: searchParams.get('limit'),
-      cursor: searchParams.get('cursor'),
-    })
+    // Filter out null values before parsing
+    const rawParams: any = {}
+    const sport = searchParams.get('sport')
+    const status = searchParams.get('status')
+    const date = searchParams.get('date')
+    const startDate = searchParams.get('startDate')
+    const endDate = searchParams.get('endDate')
+    const limit = searchParams.get('limit')
+    const cursor = searchParams.get('cursor')
+
+    if (sport) rawParams.sport = sport
+    if (status) rawParams.status = status
+    if (date) rawParams.date = date
+    if (startDate) rawParams.startDate = startDate
+    if (endDate) rawParams.endDate = endDate
+    if (limit) rawParams.limit = limit
+    if (cursor) rawParams.cursor = cursor
+
+    const params = QuerySchema.parse(rawParams)
 
     // Build where clause
     const where: any = {}
@@ -73,14 +83,14 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    const limit = Math.min(params.limit || 50, 100) // Max 100 items
+    const pageLimit = Math.min(params.limit || 50, 100) // Max 100 items
 
     const games = await prisma.game.findMany({
       where,
       orderBy: {
         startTime: 'asc',
       },
-      take: limit + 1, // Fetch one extra to check if there's more
+      take: pageLimit + 1, // Fetch one extra to check if there's more
       include: {
         _count: {
           select: {
@@ -92,8 +102,8 @@ export async function GET(request: NextRequest) {
     })
 
     // Check if there are more results
-    const hasMore = games.length > limit
-    const items = hasMore ? games.slice(0, limit) : games
+    const hasMore = games.length > pageLimit
+    const items = hasMore ? games.slice(0, pageLimit) : games
 
     return NextResponse.json({
       success: true,

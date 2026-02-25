@@ -23,16 +23,27 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
 
-    const params = QuerySchema.parse({
-      playerName: searchParams.get('playerName'),
-      propType: searchParams.get('propType'),
-      gameId: searchParams.get('gameId'),
-      sport: searchParams.get('sport'),
-      sportsbook: searchParams.get('sportsbook'),
-      minLine: searchParams.get('minLine'),
-      maxLine: searchParams.get('maxLine'),
-      limit: searchParams.get('limit'),
-    })
+    // Filter out null values before parsing
+    const rawParams: any = {}
+    const playerName = searchParams.get('playerName')
+    const propType = searchParams.get('propType')
+    const gameId = searchParams.get('gameId')
+    const sport = searchParams.get('sport')
+    const sportsbook = searchParams.get('sportsbook')
+    const minLine = searchParams.get('minLine')
+    const maxLine = searchParams.get('maxLine')
+    const limit = searchParams.get('limit')
+
+    if (playerName) rawParams.playerName = playerName
+    if (propType) rawParams.propType = propType
+    if (gameId) rawParams.gameId = gameId
+    if (sport) rawParams.sport = sport
+    if (sportsbook) rawParams.sportsbook = sportsbook
+    if (minLine) rawParams.minLine = minLine
+    if (maxLine) rawParams.maxLine = maxLine
+    if (limit) rawParams.limit = limit
+
+    const params = QuerySchema.parse(rawParams)
 
     const where: any = {}
 

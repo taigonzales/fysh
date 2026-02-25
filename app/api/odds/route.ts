@@ -20,13 +20,21 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
 
-    const params = QuerySchema.parse({
-      gameId: searchParams.get('gameId'),
-      sport: searchParams.get('sport'),
-      marketType: searchParams.get('marketType'),
-      sportsbook: searchParams.get('sportsbook'),
-      minAge: searchParams.get('minAge'),
-    })
+    // Filter out null values before parsing
+    const rawParams: any = {}
+    const gameId = searchParams.get('gameId')
+    const sport = searchParams.get('sport')
+    const marketType = searchParams.get('marketType')
+    const sportsbook = searchParams.get('sportsbook')
+    const minAge = searchParams.get('minAge')
+
+    if (gameId) rawParams.gameId = gameId
+    if (sport) rawParams.sport = sport
+    if (marketType) rawParams.marketType = marketType
+    if (sportsbook) rawParams.sportsbook = sportsbook
+    if (minAge) rawParams.minAge = minAge
+
+    const params = QuerySchema.parse(rawParams)
 
     const where: any = {}
 
