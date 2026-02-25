@@ -1,18 +1,18 @@
-import Anthropic from '@anthropic-ai/sdk';
+import Groq from 'groq-sdk';
 import { z } from 'zod';
 import { AI_CONFIG } from './config';
 
 export class ClaudeClient {
-  private client: Anthropic;
+  private client: Groq;
 
   constructor(apiKey?: string) {
-    this.client = new Anthropic({
-      apiKey: apiKey || process.env.ANTHROPIC_API_KEY,
+    this.client = new Groq({
+      apiKey: apiKey || process.env.GROQ_API_KEY,
     });
   }
 
   /**
-   * Basic text analysis with Claude
+   * Basic text analysis with Groq
    */
   async analyze(
     systemPrompt: string,
@@ -23,12 +23,15 @@ export class ClaudeClient {
       temperature?: number;
     }
   ): Promise<string> {
-    const response = await this.client.messages.create({
+    const response = await this.client.chat.completions.create({
       model: options?.model || AI_CONFIG.model,
       max_tokens: options?.maxTokens || AI_CONFIG.maxTokens,
       temperature: options?.temperature ?? AI_CONFIG.temperature,
-      system: systemPrompt,
       messages: [
+        {
+          role: 'system',
+          content: systemPrompt,
+        },
         {
           role: 'user',
           content: userPrompt,
@@ -36,12 +39,12 @@ export class ClaudeClient {
       ],
     });
 
-    const textContent = response.content.find((c) => c.type === 'text');
-    if (!textContent || textContent.type !== 'text') {
-      throw new Error('No text content in Claude response');
+    const content = response.choices[0]?.message?.content;
+    if (!content) {
+      throw new Error('No content in Groq response');
     }
 
-    return textContent.text;
+    return content;
   }
 
   /**
