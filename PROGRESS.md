@@ -1,7 +1,22 @@
 # FYSH - Complete Project Progress
 
-**Last Updated:** 2026-02-24
-**Status:** 🚀 **LIVE IN PRODUCTION** - Deployed to Vercel, all features working
+**Last Updated:** 2026-02-24 (AI Layer Design Session)
+**Status:** ✅ **Parts 1 & 2 Complete** | 📋 **Part 3 Design & Planning Complete** | 🚧 **Ready for Implementation**
+
+---
+
+## 📊 Project Overview
+
+### Completed Phases
+- ✅ **Part 1:** Landing Page (9 sections, 4 mockups, waitlist integration)
+- ✅ **Part 2:** Data Layer (14 tables, live odds sync, API endpoints)
+- 📋 **Part 3:** AI Layer Design & Implementation Plan **← Latest Session**
+
+### Current Status
+- **Production:** Landing page deployed to Vercel
+- **Database:** 113 games, 514 odds records synced
+- **Build:** Passing with 0 errors
+- **Next Phase:** AI Layer implementation (estimated 4-6 weeks)
 
 ---
 
@@ -32,11 +47,378 @@
 
 ---
 
-## 🎉 Today's Session Summary
+## 🎉 Latest Session Summary (2026-02-24)
 
 ### What We Accomplished
-**Duration:** Full session
-**Outcome:** Landing page deployed to production, 404 errors fixed, database integrated, all tests passing
+**Duration:** Full design & planning session
+**Outcome:** Complete AI Layer design document + TDD implementation plan ready for execution
+
+### Session Deliverables
+
+**1. AI Layer Design Document** (`docs/plans/2026-02-24-ai-layer-design.md`)
+- ✅ Complete architecture design (service-based microservices pattern)
+- ✅ Stats API integration strategy (API-SPORTS, $15-30/month)
+- ✅ Claude API integration design (~$900-2400/month estimated)
+- ✅ Database schema additions (PlayerSeasonStats table)
+- ✅ API endpoint specifications (6 new routes)
+- ✅ Scheduling & cron job strategy (6 automated workflows)
+- ✅ Error handling & rate limiting design
+- ✅ Testing strategy (unit, integration, load tests)
+- ✅ Cost estimates and monitoring requirements
+
+**2. Implementation Plan** (`docs/plans/2026-02-24-ai-layer-implementation.md`)
+- ✅ Phase 1: Foundation (Stats API client + database)
+- ✅ Phase 2: Hit Rate Calculator (5 hit rate types)
+- ✅ Phase 3: Claude AI Analysis (prop analyzer)
+- ✅ Phase 4: Confidence Scoring (multi-signal algorithm)
+- 📋 Phase 5: API Endpoints & Cron (to be detailed)
+- 📋 Phase 6: Personalization & Polish (to be detailed)
+
+**3. Files Created This Session**
+```
+docs/plans/
+├── 2026-02-24-ai-layer-design.md          # Complete design (771 lines)
+└── 2026-02-24-ai-layer-implementation.md  # TDD implementation plan (1452 lines)
+```
+
+**4. Architecture Decisions Made**
+- ✅ Service-based pattern (matches existing sync services)
+- ✅ API-SPORTS for player stats ($10-50/month budget)
+- ✅ Claude 3.5 Sonnet for AI analysis
+- ✅ Multi-signal confidence scoring (30% stats, 40% AI, 20% trend, 10% value)
+- ✅ Continuous refresh every 3 hours (6 daily cron jobs)
+- ✅ Comprehensive hit rates (last 5/10/25, season, vs opponent)
+- ✅ "Catch of the Day" with multi-factor selection algorithm
+- ✅ Personalized recommendations for logged-in users
+
+---
+
+## 🏗️ AI Layer Features Designed (Part 3)
+
+### Core Features
+
+**1. Multi-Angle AI Prop Analysis**
+- Claude API integration for comprehensive prop analysis
+- Structured JSON output: recommendation, recent form, matchup analysis, injury impact, betting value
+- Analysis refreshes every 3 hours to stay current with line movements
+- On-demand analysis via API endpoint
+
+**2. Historical Hit Rate Calculations**
+- **Last 5 games:** Short-term form indicator
+- **Last 10 games:** Medium-term trend
+- **Last 25 games:** Statistically significant sample
+- **Full season:** Baseline performance
+- **vs Opponent:** Career performance against today's opponent
+
+**3. Multi-Signal Confidence Scoring**
+- **Statistical baseline (30%):** Hit rate over last 25 games
+- **AI analysis (40%):** Claude's holistic assessment
+- **Trend momentum (20%):** Recent form vs season average
+- **Line value (10%):** Is the line mispriced?
+- **Output levels:** LOW | MEDIUM | HIGH | LOCK
+
+**4. "Catch of the Day" Featured Pick**
+- Daily AI-curated recommendation (generated 9:00 AM)
+- Multi-factor selection algorithm:
+  - Confidence level (40%)
+  - Statistical edge (25%)
+  - Betting value (20%)
+  - Game visibility/popularity (15%)
+- Detailed write-up with analysis breakdown
+
+**5. Personalized Recommendations**
+- User-specific prop picks based on:
+  - Favorite sports preferences
+  - Team betting history
+  - Preferred confidence levels
+  - Game time preferences
+- Top 3-5 picks per user, cached 3 hours
+
+### Technical Architecture
+
+**New Services (`lib/services/ai/`):**
+- `stats-fetcher.ts` - Fetch player stats from API-SPORTS
+- `hit-rate-calculator.ts` - Calculate all 5 hit rate types
+- `prop-analyzer.ts` - Claude API integration for analysis
+- `confidence-scorer.ts` - Multi-signal confidence algorithm
+- `catch-generator.ts` - Daily featured pick selection
+- `user-recommender.ts` - Personalized recommendations
+- `scheduler.ts` - Orchestrate AI workflows
+- `utils.ts` - Shared utilities (locking, sync results)
+- `types.ts` - TypeScript type definitions
+
+**New Stats API Client (`lib/api/stats-api/`):**
+- `client.ts` - API-SPORTS wrapper with rate limiting
+- `types.ts` - Type definitions for player stats
+- `constants.ts` - API configuration and sport mappings
+- `index.ts` - Barrel exports
+
+**New Database Table:**
+```prisma
+model PlayerSeasonStats {
+  playerName   String
+  sport        Sport
+  season       String
+  teamName     String
+  gamesPlayed  Int
+  seasonAvg    Json     // {points, rebounds, assists, ...}
+  last25Games  Json     // Array of game logs
+  homeAway     Json     // Split stats
+  vsOpponents  Json     // Historical matchups
+  fetchedAt    DateTime
+}
+```
+
+**New API Endpoints:**
+1. `GET /api/props/:id/analyze` - Get AI analysis for specific prop
+2. `GET /api/catch-of-day` - Daily featured pick
+3. `GET /api/recommendations` - Personalized picks (user-specific)
+4. `POST /api/props/batch-analyze` - Batch analysis (admin/cron)
+5. `GET /api/props` (enhanced) - Filter by AI confidence, hit rates
+6. `GET /api/stats/player/:name` - Player stats (debugging)
+
+**Vercel Cron Jobs:**
+```
+02:00 AM → Cleanup (delete old data)
+05:00 AM → Stats Sync (fetch player stats from API-SPORTS)
+06:00 AM → AI Analysis (first run of day)
+09:00 AM → AI Analysis + Catch of the Day generation
+12:00 PM → AI Analysis (props refreshed)
+03:00 PM → AI Analysis (lines moving)
+06:00 PM → AI Analysis (evening games)
+09:00 PM → AI Analysis (late games)
+```
+
+### Cost Estimates
+
+**Monthly Recurring:**
+- Stats API (API-SPORTS): $15-30/month
+- Claude API: ~$900-2400/month (depends on prop volume)
+- **Total:** ~$915-2430/month
+
+**Daily Breakdown:**
+- Stats API: ~300 requests (within 500/day limit)
+- Claude API: ~600-1200 requests (6 runs × 100-200 props)
+- Estimated daily cost: $30-80 for Claude API
+
+---
+
+## ✅ What's Currently Working (Parts 1 & 2)
+
+### Part 1: Landing Page ✅
+- 9 sections fully functional (Hero, Social Proof, Features, How It Works, Comparison, Pricing, Waitlist, FAQ, Footer CTA)
+- 4 high-fidelity mockup components (Catch of Day, Prop Finder, AI Analysis, Leaderboard)
+- Waitlist email capture with database integration
+- SEO optimization (meta tags, sitemap, robots.txt)
+- Responsive design (375px → 1440px+)
+- Accessibility compliant (ARIA, keyboard nav)
+- **Live URL:** https://fysh.vercel.app
+
+### Part 2: Data Layer ✅
+- **Database:** 14 tables, 113 games, 514 odds records
+- **API Endpoints (Working):**
+  - `GET /api/games` - List all games
+  - `GET /api/games?sport=NBA` - Filter by sport
+  - `GET /api/games/:id` - Game details with odds
+  - `GET /api/odds?gameId={id}` - Odds for specific game
+  - `GET /api/props?sport=NBA` - Player props
+  - `POST /api/sync/trigger` - Manual sync (admin)
+  - `POST /api/waitlist` - Email capture
+- **Sync Services (Working):**
+  - Game sync (upcoming games from The Odds API)
+  - Odds sync (priority-based updates)
+  - Props sync (player prop data)
+  - Rate limiting (9/500 quota remaining)
+- **Dashboard Page:** `/games` with interactive filters
+
+### Build & Deployment ✅
+- Production build: **PASSING** (0 errors)
+- TypeScript: **PASSING** (strict mode)
+- ESLint: 2 non-blocking warnings
+- Static pages: 23 generated
+- Vercel deployment: **LIVE**
+- Database: Connected (Supabase PostgreSQL)
+
+---
+
+## 🚧 What Still Needs to Be Done (Part 3 Implementation)
+
+### Phase 1: Foundation (Week 1) - Estimated 4-6 hours
+- [ ] Install axios dependency
+- [ ] Create `PlayerSeasonStats` database table
+- [ ] Build Stats API type definitions
+- [ ] Implement Stats API client with rate limiting
+- [ ] Write unit tests for Stats API client
+- [ ] Set up Stats API credentials (API-SPORTS account)
+
+### Phase 2: Hit Rate Calculator (Week 1-2) - Estimated 3-4 hours
+- [ ] Create AI service type definitions
+- [ ] Build AI service utilities (locking, sync results)
+- [ ] Implement hit rate calculation logic
+- [ ] Build batch hit rate calculator
+- [ ] Write comprehensive unit tests
+- [ ] Verify hit rate accuracy with manual calculations
+
+### Phase 3: Claude AI Analysis (Week 2) - Estimated 4-5 hours
+- [ ] Implement Claude API integration
+- [ ] Build analysis prompt generator
+- [ ] Create JSON response parser
+- [ ] Implement single prop analyzer
+- [ ] Build batch prop analyzer with rate limiting
+- [ ] Test Claude API with real props
+- [ ] Optimize prompts for quality analysis
+
+### Phase 4: Confidence Scoring (Week 2-3) - Estimated 2-3 hours
+- [ ] Implement confidence scoring algorithm
+- [ ] Build multi-signal scoring system
+- [ ] Test confidence thresholds (LOW/MEDIUM/HIGH/LOCK)
+- [ ] Integrate with prop analyzer
+
+### Phase 5: API Endpoints & Cron (Week 3) - Estimated 5-6 hours
+- [ ] Build `/api/props/:id/analyze` endpoint
+- [ ] Build `/api/catch-of-day` endpoint
+- [ ] Build `/api/recommendations` endpoint
+- [ ] Build `/api/props/batch-analyze` endpoint
+- [ ] Enhance `/api/props` with AI filters
+- [ ] Build `/api/stats/player/:name` endpoint
+- [ ] Create cron job routes (`/api/cron/*`)
+- [ ] Configure Vercel cron schedule
+- [ ] Test all API endpoints
+- [ ] Add authentication/authorization
+
+### Phase 6: Catch of the Day & Personalization (Week 3-4) - Estimated 4-5 hours
+- [ ] Build Catch of the Day generator
+- [ ] Implement multi-factor scoring algorithm
+- [ ] Test daily pick selection
+- [ ] Build user recommender service
+- [ ] Implement personalization logic
+- [ ] Add user preference tracking
+- [ ] Test personalized recommendations
+
+### Phase 7: Testing & Optimization (Week 4) - Estimated 3-4 hours
+- [ ] Write integration tests (full pipeline)
+- [ ] Write API endpoint tests
+- [ ] Manual testing checklist
+- [ ] Load testing (concurrent requests)
+- [ ] Performance optimization
+- [ ] Error handling verification
+- [ ] Rate limiting verification
+
+### Phase 8: Production Deployment (Week 4) - Estimated 2-3 hours
+- [ ] Add environment variables to Vercel
+- [ ] Deploy AI services to production
+- [ ] Configure production cron jobs
+- [ ] Verify Stats API credentials
+- [ ] Verify Claude API credentials
+- [ ] Monitor initial AI analysis runs
+- [ ] Check cost/usage metrics
+- [ ] Verify all endpoints in production
+
+### Total Estimated Time: **27-36 hours** (4-6 weeks part-time)
+
+---
+
+## 📋 Implementation Plan Details
+
+### TDD Approach
+Every feature follows Test-Driven Development:
+1. **Write failing test** - Define expected behavior
+2. **Run test to verify it fails** - Confirm test is valid
+3. **Write minimal implementation** - Make test pass
+4. **Run test to verify it passes** - Confirm implementation works
+5. **Commit** - Small, atomic commits with clear messages
+
+### File Organization
+```
+lib/
+├── api/
+│   ├── odds-api/           ✅ Existing
+│   └── stats-api/          🚧 New (Phase 1)
+│       ├── client.ts
+│       ├── types.ts
+│       ├── constants.ts
+│       └── index.ts
+├── services/
+│   ├── sync/               ✅ Existing
+│   └── ai/                 🚧 New (Phases 2-6)
+│       ├── stats-fetcher.ts
+│       ├── hit-rate-calculator.ts
+│       ├── prop-analyzer.ts
+│       ├── confidence-scorer.ts
+│       ├── catch-generator.ts
+│       ├── user-recommender.ts
+│       ├── scheduler.ts
+│       ├── utils.ts
+│       └── types.ts
+app/api/
+├── props/[id]/analyze/     🚧 New (Phase 5)
+├── catch-of-day/           🚧 New (Phase 5)
+├── recommendations/        🚧 New (Phase 5)
+└── cron/                   🚧 New (Phase 5)
+    ├── stats-sync/
+    ├── ai-analysis/
+    ├── catch-of-day/
+    └── cleanup/
+```
+
+### Dependencies to Add
+```json
+{
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.78.0",  ✅ Already installed
+    "axios": "^1.x.x"                🚧 To install (Phase 1)
+  }
+}
+```
+
+### Environment Variables to Configure
+```bash
+# Already configured:
+ANTHROPIC_API_KEY=sk-ant-...           ✅
+DATABASE_URL=postgresql://...         ✅
+
+# To add:
+STATS_API_KEY=your_api_sports_key     🚧
+STATS_API_BASE_URL=https://...        🚧
+```
+
+---
+
+## 🎯 Next Immediate Steps
+
+### Option 1: Start Implementation (Recommended)
+1. Review implementation plan: `docs/plans/2026-02-24-ai-layer-implementation.md`
+2. Start with Phase 1, Task 1.1: Install axios dependency
+3. Follow TDD workflow for each task
+4. Commit frequently (after each passing test)
+
+### Option 2: Refine Design
+1. Review design document: `docs/plans/2026-02-24-ai-layer-design.md`
+2. Adjust cost estimates or architecture if needed
+3. Research API-SPORTS alternatives if desired
+4. Update implementation plan accordingly
+
+### Option 3: Set Up Infrastructure
+1. Create API-SPORTS account ($15-30/month plan)
+2. Test Stats API with sample requests
+3. Verify Claude API quota/tier
+4. Set up monitoring dashboard (optional)
+
+---
+
+## 📚 Key Documents
+
+### Design & Planning
+- **AI Layer Design:** `docs/plans/2026-02-24-ai-layer-design.md` (771 lines)
+- **Implementation Plan:** `docs/plans/2026-02-24-ai-layer-implementation.md` (1452 lines)
+- **Landing Page Design:** `docs/plans/2026-02-24-landing-page.md`
+
+### Database Schema
+- **Prisma Schema:** `prisma/schema.prisma` (14 tables + PlayerSeasonStats planned)
+
+### Environment Configuration
+- **Env Template:** `.env.local.example`
+- **Vercel Config:** `vercel.json` (to be updated with cron jobs)
 
 ---
 
