@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 
 type Game = {
   id: string
@@ -38,11 +38,7 @@ export default function GamesPage() {
   const [gameOdds, setGameOdds] = useState<Odds[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    fetchGames()
-  }, [selectedSport])
-
-  const fetchGames = async () => {
+  const fetchGames = useCallback(async () => {
     setLoading(true)
     try {
       const res = await fetch(`/api/games?sport=${selectedSport}`)
@@ -54,7 +50,11 @@ export default function GamesPage() {
       console.error('Failed to fetch games:', error)
     }
     setLoading(false)
-  }
+  }, [selectedSport])
+
+  useEffect(() => {
+    fetchGames()
+  }, [fetchGames])
 
   const fetchOdds = async (gameId: string) => {
     try {
