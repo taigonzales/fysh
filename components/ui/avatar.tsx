@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { cn } from '@/lib/utils/cn'
 import { User } from 'lucide-react'
 
@@ -24,7 +25,7 @@ export function Avatar({ src, name, size = 'md', className }: AvatarProps) {
   return (
     <div
       className={cn(
-        'rounded-full bg-ocean-dark border border-border flex items-center justify-center overflow-hidden',
+        'relative rounded-full bg-ocean-dark border border-border flex items-center justify-center overflow-hidden',
         {
           'h-8 w-8 text-xs': size === 'sm',
           'h-10 w-10 text-sm': size === 'md',
@@ -35,11 +36,13 @@ export function Avatar({ src, name, size = 'md', className }: AvatarProps) {
       )}
     >
       {src && !imageError ? (
-        <img
+        <Image
           src={src}
           alt={name || 'Avatar'}
-          className="h-full w-full object-cover"
+          fill
+          className="object-cover"
           onError={() => setImageError(true)}
+          unoptimized={src.startsWith('http')}
         />
       ) : initials ? (
         <span className="font-semibold text-neon-teal">{initials}</span>
