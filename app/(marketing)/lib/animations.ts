@@ -2,7 +2,7 @@
 import { Variants } from 'framer-motion'
 
 // Factory function for fadeInUp animation with reduced motion support
-export const createFadeInUp = (shouldReduceMotion: boolean): Variants =>
+export const createFadeInUp = (shouldReduceMotion: boolean | null): Variants =>
   shouldReduceMotion
     ? {
         hidden: { opacity: 0 },
@@ -21,7 +21,7 @@ export const createFadeInUp = (shouldReduceMotion: boolean): Variants =>
       }
 
 // Factory function for fadeInLeft animation with reduced motion support
-export const createFadeInLeft = (shouldReduceMotion: boolean): Variants =>
+export const createFadeInLeft = (shouldReduceMotion: boolean | null): Variants =>
   shouldReduceMotion
     ? {
         hidden: { opacity: 0 },
@@ -40,7 +40,7 @@ export const createFadeInLeft = (shouldReduceMotion: boolean): Variants =>
       }
 
 // Factory function for fadeInRight animation with reduced motion support
-export const createFadeInRight = (shouldReduceMotion: boolean): Variants =>
+export const createFadeInRight = (shouldReduceMotion: boolean | null): Variants =>
   shouldReduceMotion
     ? {
         hidden: { opacity: 0 },
@@ -59,7 +59,7 @@ export const createFadeInRight = (shouldReduceMotion: boolean): Variants =>
       }
 
 // Factory function for scaleOnHover with reduced motion support
-export const createScaleOnHover = (shouldReduceMotion: boolean) =>
+export const createScaleOnHover = (shouldReduceMotion: boolean | null) =>
   shouldReduceMotion
     ? {
         rest: { opacity: 1 },

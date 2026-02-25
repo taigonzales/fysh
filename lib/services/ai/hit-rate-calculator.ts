@@ -135,7 +135,6 @@ export async function batchCalculateHitRates(): Promise<SyncResult> {
             data: {
               hitRateLast5: hitRates.hitRateLast5,
               hitRateLast10: hitRates.hitRateLast10,
-              hitRateLast25: hitRates.hitRateLast25,
               hitRateSeason: hitRates.hitRateSeason,
               hitRateVsOpponent: hitRates.hitRateVsOpponent,
             },

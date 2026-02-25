@@ -12,7 +12,6 @@ export interface PropAnalysisContext {
   hitRates: {
     last5: number;
     last10: number;
-    last25: number;
     season: number;
     vsOpponent: number | null;
   };
@@ -42,7 +41,6 @@ export function buildPropAnalysisPrompt(
   // Calculate hit counts from rates
   const last5Hits = Math.round(hitRates.last5 * 5);
   const last10Hits = Math.round(hitRates.last10 * 10);
-  const last25Hits = Math.round(hitRates.last25 * 25);
 
   const systemPrompt = `You are a professional sports betting analyst specializing in player prop analysis.
 
@@ -70,7 +68,6 @@ IMPORTANT: Respond ONLY with valid JSON. Do not include any text before or after
 **Hit Rate Analysis:**
 - Last 5 games: ${last5Hits} of 5 (${(hitRates.last5 * 100).toFixed(0)}%)
 - Last 10 games: ${last10Hits} of 10 (${(hitRates.last10 * 100).toFixed(0)}%)
-- Last 25 games: ${last25Hits} of 25 (${(hitRates.last25 * 100).toFixed(0)}%)
 - Season: ${(hitRates.season * 100).toFixed(0)}%${
     hitRates.vsOpponent !== null
       ? `\n- vs ${opponent}: ${(hitRates.vsOpponent * 100).toFixed(0)}%`
