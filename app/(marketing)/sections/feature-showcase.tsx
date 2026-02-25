@@ -5,9 +5,9 @@
  * Alternating layout displaying 4 key features with mockups
  */
 
-import { motion, useInView } from 'framer-motion'
+import { motion, useInView, useReducedMotion } from 'framer-motion'
 import { useRef } from 'react'
-import { fadeInLeft, fadeInRight } from '../lib/animations'
+import { createFadeInLeft, createFadeInRight } from '../lib/animations'
 import { CatchOfDayMockup } from '../mockups/catch-of-day-mockup'
 import { PropFinderMockup } from '../mockups/prop-finder-mockup'
 import { AiAnalysisMockup } from '../mockups/ai-analysis-mockup'
@@ -58,6 +58,9 @@ function FeatureRow({
 }) {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const shouldReduceMotion = useReducedMotion()
+  const fadeInLeft = createFadeInLeft(shouldReduceMotion)
+  const fadeInRight = createFadeInRight(shouldReduceMotion)
   const isReverse = feature.direction === 'right'
   const MockupComponent = feature.mockup
   const Icon = feature.icon

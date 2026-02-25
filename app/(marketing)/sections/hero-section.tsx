@@ -5,12 +5,14 @@
  * Full viewport height hero with animated particles background
  */
 
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { ArrowRight, PlayCircle } from 'lucide-react'
-import { fadeInUp, staggerContainer } from '../lib/animations'
+import { createFadeInUp, staggerContainer } from '../lib/animations'
 
 export function HeroSection() {
+  const shouldReduceMotion = useReducedMotion()
+  const fadeInUp = createFadeInUp(shouldReduceMotion)
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
   }
