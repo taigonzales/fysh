@@ -39,3 +39,8 @@ next-env.d.ts
 # prisma
 /prisma/*.db
 /prisma/*.db-journal
+
+.vercel
+
+# git worktrees
+.worktrees/
